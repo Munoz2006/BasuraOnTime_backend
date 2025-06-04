@@ -32,6 +32,6 @@
     "@types/node": "^20.12.7",
     "@types/nodemailer": "^6.4.17",
     "secure-random": "^1.1.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.3"
   }
 }
