@@ -18,9 +18,11 @@ import deleteUser from './routes/deleteUser';
 import editUser from './routes/editUser';
 import recoverPassword from './routes/recoverPassword';
 import validateEmail from './routes/validatePassword';
-// pull
+import notificarUser from './routes/notificaruser';
+import configSoliAdmin from './routes/configSoliAdmin';
 
 import dotenv from "dotenv";
+
 
 dotenv.config(); 
 
@@ -46,8 +48,10 @@ app.use('/settingsTruck', configCamionAdmin);
 app.use('/addTruck', addCamionAdmin);
 app.use('/modifyTruck', modificarCamionAdmin);
 app.use('/deleteTruck', deleteCamionAdmin);
+app.use('/settingsRequest', configSoliAdmin);
 
 ///hola
+app.use ('/notifiaciones', notificarUser);
 const PORT = process.env.PORT || 10101;
 
 app.listen(PORT, () => {

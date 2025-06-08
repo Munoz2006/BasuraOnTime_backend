@@ -6,6 +6,10 @@ class SolicitudServis{
         solicitud.cantidad = parseInt(solicitud.cantidad.toString());
         return await SolitudRepository.add(solicitud);
     }
+
+    static async mostrarsoli(){
+        return await SolitudRepository.mostrarsoli();
+    }
 }
 
 export default SolicitudServis;
