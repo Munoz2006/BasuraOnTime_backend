@@ -5,17 +5,20 @@ class Solicitud{
     private _cantidad: number;
     private _tipo_residuo: string;
     private _tamano: string;
+    private _estado: string;
 
     constructor(
         cantidad: number,
         tipo_residuo: string, tamano: string, 
         zona: string, fecha_solicitud: string,
+        estado: string 
     ){
         this._cantidad = cantidad;
         this._tipo_residuo = tipo_residuo;
         this._tamano = tamano;
         this._zona = zona;
         this._fecha_solicitud = fecha_solicitud;
+        this._estado = estado;
     }
 
 
@@ -39,6 +42,10 @@ class Solicitud{
         return this._tamano;
     }
 
+    get estado(): string {
+        return this._estado;
+    }
+
 
     set zona(zona: string) {
         this._zona = zona;
@@ -56,6 +63,9 @@ class Solicitud{
 
     set tamano(tamano: string) {
         this._tamano = tamano;
+    }
+    set estado(estado: string) {
+        this._estado = estado;
     }
 }
 export default Solicitud;

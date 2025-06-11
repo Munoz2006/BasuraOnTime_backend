@@ -9,7 +9,7 @@ class SolicitudRepository {
     }
 
     static async mostrarsoli(){
-        const query = 'SELECT zona, fecha_recoleccion, cantidad, tipo_residuo, tamano FROM solicitudes';
+        const query = 'SELECT zona, fecha_recoleccion, cantidad, tipo_residuo, tamano, estado FROM solicitudes';
         const result = await db.execute(query);
         return result[0];
     }

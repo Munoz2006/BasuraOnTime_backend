@@ -27,7 +27,7 @@ class UserRepository {
     }
 
     static async Mostrarinfo(id: number){
-        const sql = 'SELECT email, nombres, apellidos FROM users WHERE id_usuario = ?';
+        const sql = 'SELECT email, nombres, apellidos, telefono FROM users WHERE id_usuario = ?';
         const values = [id];
         const result: any = await db.execute(sql, values);
         if (result[0].length > 0){

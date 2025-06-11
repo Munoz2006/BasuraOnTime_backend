@@ -44,13 +44,12 @@ app.use('/validateEmail', validateEmail);
 app.use('/authAdmin', authAdmin);
 app.use('/startAdmin', startAdmin); 
 app.use('/settingsTruck', configCamionAdmin);
-//app.use('/settingsRoutes', configRutasAdmin); 
 app.use('/addTruck', addCamionAdmin);
 app.use('/modifyTruck', modificarCamionAdmin);
 app.use('/deleteTruck', deleteCamionAdmin);
 app.use('/settingsRequest', configSoliAdmin);
+//app.use('/settingsRoutes', configRutasAdmin); 
 
-///hola
 app.use ('/notifiaciones', notificarUser);
 const PORT = process.env.PORT || 10101;
 
