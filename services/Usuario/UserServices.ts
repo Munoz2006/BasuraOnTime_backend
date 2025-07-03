@@ -25,14 +25,14 @@ class UserService {
     }
 
 
-    static async EditarUsuario(nombres: string, apellidos: string, password: string, email: string, ) {
+    static async EditarUsuario(email: string,nombres: string, apellidos: string, telefono: string, password: string, id: number) {
         const hashedPassword = await generateHash(password);
-        return await UserRepository.EditarUsuario(nombres, apellidos, hashedPassword, email);
+        return await UserRepository.EditarUsuario(email, nombres, apellidos, telefono, hashedPassword, id);
     }
 
     static async valiateEmail(email: string) {
         const user = await UserRepository.validateEmail(email);
-       return user;
+        return user;
     }
 
     static async recoverPassword(Newpassword: string, validatePassword: string, email: string) {

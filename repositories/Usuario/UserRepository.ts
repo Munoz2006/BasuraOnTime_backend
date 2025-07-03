@@ -7,19 +7,32 @@ import bcrypt from 'bcryptjs';
 class UserRepository {
 
     static async add(user: User){
-        const sql = 'INSERT INTO users (email, nombres, apellidos, telefono, password) VALUES (?, ?, ?, ?,?)';
-        const values = [user.email, user.nombres, user.apellidos, user.telefono, user.password];
-        return db.execute(sql, values);
+        try {
+            const connection = await db.getConnection();
+            connection.release();
+            const sql = 'CALL InsertUsuario(?, ?, ?, ?, ?, ?, ?, ?)';
+            const values = [user.id_rol, user.email, user.nombres, user.apellidos, user.telefono, user.password, user.latitud, user.longitud];
+            console.log(typeof(user.latitud));
+            const result = await db.execute(sql, values);
+            return result;
+        } catch (error) {
+            console.error('no se logro conectar a la db', error);
+            throw error;
+        }
     }
 
     static async login(auth: Auth){
-        const sql = 'SELECT id_usuario, password, id_rol FROM users WHERE email = ?';
+        const sql = 'CALL LoginUsuario(?)';
         const values = [auth.email];
         const result: any = await db.execute(sql, values);
         if (result[0].length > 0){
-          const isPasswordValid = await bcrypt.compare(auth.password, result[0][0].password);
+            const user = result[0][0];
+            if(!user[0].password){
+                return {logged: false, status: "Usuario no tiene contraseña" };
+            }
+            const isPasswordValid = await bcrypt.compare(auth.password, user[0].password);
           if (isPasswordValid){
-            return {logged: true, status: "Successful authentication", id: result[0][0].id_usuario, id_rol: result[0][0].id_rol};
+            return {logged: true, status: "Successful authentication", id: user[0].id_usuario, id_rol: user[0].id_rol};
           }
           return {logged: false, status: "Invalid username or password" };
         }
@@ -27,17 +40,18 @@ class UserRepository {
     }
 
     static async Mostrarinfo(id: number){
-        const sql = 'SELECT email, nombres, apellidos, telefono FROM users WHERE id_usuario = ?';
+        const sql = 'CALL GetUsuarioById(?)';
         const values = [id];
         const result: any = await db.execute(sql, values);
         if (result[0].length > 0){
+            console.log(result[0][0]);
             return result[0][0];
         }
         return {status: false, data: null};
     }
 
     static async EliminarUsuario(id: number) {
-        const sql = 'DELETE FROM users WHERE id_usuario = ?';
+        const sql = 'CALL DeleteUsuarioById(?)';
         const values = [id];
         try {
             const result: any = await db.execute(sql, values);
@@ -50,18 +64,15 @@ class UserRepository {
         }
     }
 
-    static async EditarUsuario(nombres: string, apellidos: string, password: string, email: string) {
-        const sql = `
-            UPDATE users 
-            SET nombres = ?, apellidos = ?, password = ?
-            WHERE email = ?`;
-        const values = [nombres, apellidos, password, email];    
+    static async EditarUsuario( email: string, nombres: string, apellidos: string, telefono: string, password: string, id: number) {
+        const sql = 'CALL UpdateUsuarioById(?, ?, ?, ?, ?, ?)';
+        const values = [email, nombres, apellidos, telefono, password, id];    
         const result: any = await db.execute(sql, values);
         return result;
     }
 
     static async validateEmail(email: string) {
-        const sql = 'SELECT id_usuario ,id_rol FROM users WHERE email = ?';
+        const sql = 'CALL ValidateEmail(?)';
         const values = [email];
         const result: any = await db.execute(sql, values);
         if (result[0].length > 0){
@@ -71,7 +82,7 @@ class UserRepository {
         }
     }
     static async recoverPassword(Newpassword: string, email: string) {
-        const sql = 'UPDATE users SET password = ? WHERE email = ?';
+        const sql = 'CALL UpdateUsuarioPasswordByEmail(?, ?)';
         const values = [Newpassword,email];
         const result: any = await db.execute(sql, values);
         console.log(result);
@@ -80,6 +91,7 @@ class UserRepository {
         }
         return { status: false, message: 'Error al actualizar la contraseña' };
     }
+
 
 }
 

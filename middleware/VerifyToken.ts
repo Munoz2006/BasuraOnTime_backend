@@ -23,6 +23,7 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
         try {
             let decoded = jwt.verify(token, process.env.KEY_TOKEN as string) as JwtPayload;            
             req.body.id = decoded.data.id;
+            req.body.rol = decoded.data.rol;
             return next()
         } catch (error) {
             return res.status(403).json(
