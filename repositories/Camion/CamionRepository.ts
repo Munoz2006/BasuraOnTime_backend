@@ -4,9 +4,20 @@ class CamionRepository{
 
     static async addCamion(camion: any) {
         try{
-            const sql = 'INSERT INTO camion (placa, marca, modelo, capacidad, estado_camion, tipo_c, fk_id_administrador) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const values = [camion.placa, camion.marca, camion.modelo, camion.capacidad, camion.estado_camion, camion.tipo_c, camion.id];
+            const sql = 'CALL AddCamion(?, ?, ?, ?, ?, ?, ?)';
+            const values = [
+                camion.placa,
+                camion.marca,
+                camion.modelo,
+                camion.capacidad,
+                camion.estado_camion,
+                camion.tipo_c,
+                camion.id
+            ];
             const result = await db.execute(sql, values);
+            const rows = result[0] as any[][];
+            const id_camion = rows[0][0].id_camion;
+            return id_camion;
         } catch(error){
             console.error("No se puedo agregar", error)
             throw error

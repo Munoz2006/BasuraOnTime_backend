@@ -44,7 +44,6 @@ class UserRepository {
         const values = [id];
         const result: any = await db.execute(sql, values);
         if (result[0].length > 0){
-            console.log(result[0][0]);
             return result[0][0];
         }
         return {status: false, data: null};

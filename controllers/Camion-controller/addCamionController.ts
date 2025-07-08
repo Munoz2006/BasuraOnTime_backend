@@ -17,7 +17,9 @@ let addCamionController = async (req: Request, res: Response) => {
         console.log(req.body);
         const addCamion = await CamionService.addCamion(new Camion(placa, modelo, capacidad, estado_camion, marca, tipo_c, id));
         return res.status(201).json(
-            { status: 'Camion agregado correctamente'}
+            { status: 'Camion agregado correctamente',
+              id_camion: addCamion
+            }
         );
 
     } catch (error: any) {

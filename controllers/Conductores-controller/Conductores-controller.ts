@@ -1,31 +1,41 @@
 import { Request, Response } from 'express';
-import ConductorRepository from '../../repositories/Conductores/ConductoresRepository';
-import Conductor from '../../Dto/Conductores/Conductores';
+import ConductorServices from '../../services/Conductor/ConductorServices';
+import Conductor from '../../Dto/Conductores/Conductor';
+import enviarCorreo from '../../Helpers/utils/nodemailer';
 
 export const agregarConductor = async (req: Request, res: Response) => {
   try {
-    const { nombres, apellidos, telefono, tipo_licencia, fecha_vencimiento_licencia } = req.body;
+    delete req.body.id;
+    delete req.body.rol;
+    const { id_rol , email, nombres, apellidos, telefono, password ,tipo_licencia, fecha_vencimiento_licencia, fk_id_camion } = req.body;
 
-    if (!nombres || !apellidos || !telefono || !tipo_licencia || !fecha_vencimiento_licencia) {
+    if (!id_rol || !email || !nombres || !apellidos || !telefono || !password || !tipo_licencia || !fecha_vencimiento_licencia || !fk_id_camion) {
       return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
     }
 
-    // ✅ Crear instancia del DTO
     const conductor = new Conductor(
+      id_rol,
+      email,
       nombres,
       apellidos,
       telefono,
+      password,
       tipo_licencia,
-      fecha_vencimiento_licencia
+      fecha_vencimiento_licencia,
+      fk_id_camion,
     );
 
-    await ConductorRepository.add(conductor);
+    await ConductorServices.registerConductor(conductor);
+    await enviarCorreo(email, password);
 
-    res.status(201).json({ mensaje: 'Conductor agregado correctamente' });
+    res.status(201).json({ mensaje: 'Conductor agregado y correo enviado' });
   } catch (error) {
-    console.error('Error al agregar conductor:', error);
-    res.status(500).json({ mensaje: 'Error al insertar el conductor' });
-  }
+  console.error('Error al registrar conductor:', error);
+  res.status(500).json({ mensaje: 'Error al registrar el conductor', error: error instanceof Error ? error.message : error });
+}
+
+  
 };
+
 
 export default agregarConductor

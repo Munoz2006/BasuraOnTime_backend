@@ -1,10 +1,11 @@
 // src/routes/sms.ts
 import { Router, Request, Response } from 'express';
 import  { enviarSMSVonage } from '../Helpers/notificaciones/sms';
+import verifyToken from '../middleware/VerifyToken';
 
 const router = Router();
 
-router.post('/enviar-sms', async (req: Request, res: Response) => {
+router.post('/enviar-sms', verifyToken ,async (req: Request, res: Response) => {
   const { numero, mensaje } = req.body;
 
   try {

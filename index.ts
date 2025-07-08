@@ -1,6 +1,8 @@
 import express from "express";
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import {Server} from 'socket.io';
+import http from 'http';
 
 import register from './routes/register';
 import auth from './routes/auth';
@@ -24,13 +26,44 @@ import editconductor from "./routes/editConductores";
 import elminarConductor from "./routes/deleteConductor";
 import documento from "./routes/uploadDocumento";
 import mostrarDoc from "./routes/mostrarDocumento";
-import mostrarUbi from "./routes/mostrarUbiUser";
+import UsuarioRepository from "./repositories/Usuario/UsuarioRepository2";
+import TruckService from "./services/Conductor/TruckService";
+import TruckController from "./controllers/Conductores-controller/TruckController";
+import loginConductor from './routes/loginConductor';
+import verifyToken from "./middleware/VerifyToken";
 
 import dotenv from "dotenv";
 dotenv.config(); 
 
 const app = express().use(bodyParser.json());
 app.use(cors());
+
+const server = http.createServer(app);
+const io = new Server(server,{cors:{ origin:"*" }});
+
+const userSockets = new Map();
+
+// index.ts
+
+const usuarioRepository = new UsuarioRepository();
+const truckService = new TruckService(usuarioRepository);
+const truckController = new TruckController(truckService, io, userSockets);
+
+
+io.on('connection', (socket) => {
+    socket.on('register_user', (userId) => {
+      userSockets.set(String(userId), socket)
+    })
+    
+    socket.on('disconnect', () => {
+      for (const [userId, userSocket] of userSockets.entries()) {
+        if (userSocket.id === socket.id) {
+          userSockets.delete(userId);
+          break;
+        }
+      }
+    })
+});
 
 // rutas usuario
 app.use('/register', register);
@@ -42,28 +75,34 @@ app.use('/deleteUser', deleteUser);
 app.use('/editUser', editUser);
 app.use('/reset-password', recoverPassword);
 app.use('/validateEmail', validateEmail);
-app.use('/deleteTruck', deleteCamionAdmin);
 app.use ('/mostrar', mostrarDoc)
-app.use('/mostrarUbicacion', mostrarUbi);
+
+
+
 // rutas admin
 app.use('/authAdmin', authAdmin);
 app.use('/startAdmin', startAdmin); 
 app.use('/settingsTruck', configCamionAdmin);
 app.use('/addTruck', addCamionAdmin);
 app.use('/modifyTruck', modificarCamionAdmin);
-app.use ('/notifiaciones', notificarUser);
+app.use('/deleteTruck', deleteCamionAdmin);
+app.use ('/notify', notificarUser);
 app.use('/settingsRequest', configSoliAdmin);
 app.use ('/documentos',documento)
  
 
 //conductores
+//app.use('/mostrar')
 app.use ('/agregarConductor',conductor);
 app.use ("/editConductor", editconductor)
 app.use ("/deletConductor", elminarConductor)
+app.use('/loginConductor', loginConductor);
+app.post('/truck_location', truckController.updateTruckLocation);
+//app.get('/truck_location', verifyToken, truckController.getTruckLocation);
 
 const PORT = process.env.PORT || 10101;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log("Servidor ejecutándose en el puerto: ", PORT);
 }).on("error", (error) => {
   throw new Error(error.message);
