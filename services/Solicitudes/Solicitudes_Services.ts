@@ -11,15 +11,20 @@ class SolicitudServis{
         const solicitudes = await SolitudRepository.mostrarsoli();
         let solicitudesA: any[] = [];
         solicitudes.forEach((solicitud: any) => {
+            const id_solicitud = solicitud.id_solicitud
             const zona = solicitud.zona;
             const cantidad = solicitud.cantidad;
             const fecha_solicitud = solicitud.fecha_solicitud;
-            const estado = solicitud.estado;
             const tamano = solicitud.tamano;
+            const estado = solicitud.estado;
             const nombres = solicitud.nombres;
-            solicitudesA.push({ zona, cantidad, fecha_solicitud, estado, tamano, nombres });
+            solicitudesA.push({id_solicitud ,zona, cantidad, fecha_solicitud, estado, tamano, nombres });
         });
         return solicitudesA;
+    }
+
+    static async estadoSoli(id_solicitud: number, estado: string){
+        return await SolitudRepository.estadoSoli(id_solicitud, estado)
     }
 }
 

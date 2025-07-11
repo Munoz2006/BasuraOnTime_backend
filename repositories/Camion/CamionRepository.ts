@@ -4,13 +4,12 @@ class CamionRepository{
 
     static async addCamion(camion: any) {
         try{
-            const sql = 'CALL AddCamion(?, ?, ?, ?, ?, ?, ?)';
+            const sql = 'CALL AddCamion(?, ?, ?, ?, ?, ?)';
             const values = [
                 camion.placa,
                 camion.marca,
                 camion.modelo,
                 camion.capacidad,
-                camion.estado_camion,
                 camion.tipo_c,
                 camion.id
             ];
@@ -25,8 +24,8 @@ class CamionRepository{
     }
 
     static async modifyTruck(camion: any) {
-        const sql = 'UPDATE camion SET modelo = ?, capacidad = ?, estado_camion = ?, marca = ?, tipo_c = ? WHERE placa = ?';
-        const values = [camion.modelo, camion.capacidad, camion.estado_camion, camion.marca, camion.tipo_c, camion.placa];
+        const sql = 'CALL UpdateCamion(?, ?, ?, ?, ?)';
+        const values = [camion.placa, camion.marca, camion.modelo, camion.capacidad, camion.tipo_c];
         
         return db.execute(sql, values);
     }

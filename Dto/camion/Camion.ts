@@ -11,18 +11,18 @@ class Camion{
         placa : string,
         modelo : string,
         capacidad : string,
-        estado_camion : string,
         marca : string,
         tipo_c : string,
-        id? : number
+        id? : number,
+        estado_camion? : string
     ){
         this._placa = placa;
         this._modelo = modelo;
         this._capacidad = capacidad;
-        this._estado_camion = estado_camion;
         this._marca = marca;
         this._tipo_c = tipo_c;
         this._id = id ?? 0;
+        this._estado_camion = estado_camion ?? "Inactivo";
     }
 
     // Getters

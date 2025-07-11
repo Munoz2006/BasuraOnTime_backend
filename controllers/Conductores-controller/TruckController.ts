@@ -2,15 +2,15 @@
 
 import { Server, Socket } from "socket.io";
 import TruckService from "./../../services/Conductor/TruckService";
+import ConductorRepository from "../../repositories/Conductores/ConductoresRepository";
 import { Request, Response } from "express";
 
 export default class TruckController {
   private truckService: TruckService;
   private io: Server;
-
-  // ✅ Corrige el tipo: guarda Socket, NO string
   private userSockets: Map<string, Socket>;
   private lastTruckLocation: { lat: number; lng: number; timestamp: Date } | null;
+  private  truckId: number | null = null;
 
   constructor(truckService: TruckService, io: Server, userSockets: Map<string, Socket>) {
     this.truckService = truckService;
@@ -23,12 +23,14 @@ export default class TruckController {
   }
 
   async updateTruckLocation(req: Request, res: Response) {
-    const { lat, lng } = req.body;
-
-    if (!lat || !lng) {
-      return res.status(400).json({ error: 'Faltan coordenadas lat/lng' });
+    delete req.body.rol
+    const { lat, lng, estado, id} = req.body;
+    if (!lat || !lng || !estado) {
+      return res.status(400).json({ error: 'Faltan datos de conductor' });
     }
-
+    
+    this.truckId = id;
+    const guardarDatos = await ConductorRepository.modifiyConductor(lat, lng, estado, id)
     this.lastTruckLocation = { lat, lng, timestamp: new Date() };
 
     try {
@@ -43,7 +45,6 @@ export default class TruckController {
       usuariosCercanos.forEach((u) => {
         const userIdStr = String(u.userId);
 
-        // ✅ Recupera directamente el Socket
         const socket = this.userSockets.get(String(userIdStr));
 
         if (socket && socket.connected) {
@@ -84,7 +85,16 @@ export default class TruckController {
       return res.status(404).json({ error: 'No hay ubicación aún.' });
     }
 
-    return res.json(this.lastTruckLocation);
+    if(!this.truckId){
+      return res.status(404).json({ error: 'No hay ubicación aún 2.' });
+    }
+    const consultarEstado = await ConductorRepository.consultarEstado(this.truckId);
+    
+    if(consultarEstado == "Activo"){
+      return res.json(this.lastTruckLocation);
+    }else{
+      return res.status(404).json({ error: 'No hay ubicación aún 2.' });  
+    }
   }
 
   // Método para debuggear usuarios conectados

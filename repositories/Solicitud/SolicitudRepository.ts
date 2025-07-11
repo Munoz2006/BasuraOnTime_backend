@@ -21,13 +21,20 @@ class SolicitudRepository {
         try {
             const query = 'CALL GetmostrarSoli()';
             const [result]: any = await db.execute(query);
-            console.log(result);
             const solicitudes = result[0];
             return solicitudes;
         } catch (error) {
             console.error('Error al mostrar solicitudes:', error);
             throw error;
         }
+    }
+
+    static async estadoSoli(id_solicitud: number, estado: string){
+        const sql = 'CALL UpdateSolicitudEstado(?,?)'
+        const values = [id_solicitud, estado]
+        const [result]: any = await db.execute(sql, values);
+        const estadoS = result[0];
+        return estadoS;
     }
 }
 

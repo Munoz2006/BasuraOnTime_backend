@@ -15,6 +15,18 @@ class ConductorServices {
     static async updateConductor(id: number, conductor: Conductor) {
         return await ConductorRepository.update(id, conductor);
     }
-    
+    static async login(email: string, password: string){
+        
+        return await ConductorRepository.login(email, password)
+    }
+    static async cambiarEstado(id: number, estado: string){
+
+        return await ConductorRepository.cambiarEstado(id, estado)
+    }
+    static async mostrarConductor(id: number){
+        const conductor = await ConductorRepository.mostrarConductores(id);
+        //console.log(conductor)
+        return conductor;
+    }
 }
 export default ConductorServices;

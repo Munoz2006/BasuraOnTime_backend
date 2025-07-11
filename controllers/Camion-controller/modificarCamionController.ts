@@ -10,13 +10,12 @@ let modificarCamionAdminController = async (req: Request, res: Response) => {
          placa, 
          modelo,
          capacidad,
-         estado_camion,
          marca,
          tipo_c,
     } = req.body;
-
+    delete req.body.rol
     delete req.body.id;
-    const modifyTruck = await CamionService.modifyTruck(new Camion(placa, modelo, capacidad, estado_camion, marca, tipo_c));
+    const modifyTruck = await CamionService.modifyTruck(new Camion(placa, modelo, capacidad, marca, tipo_c));
     return res.status(200).json({
       status: 'Se modifico el camion',
     });

@@ -3,6 +3,6 @@ import { loginConductor } from '../controllers/Conductores-controller/loginDrive
 
 const router = express.Router();
 
-router.post('/iniciar', loginConductor);
+router.post('/', loginConductor);
 
 export default router;

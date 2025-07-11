@@ -19,7 +19,7 @@ export const enviarCorreo = async (destinatario: string, contrasena: string) => 
     to: destinatario,
     subject: 'Tu acceso a la plataforma',
     html: `
-      <p>Hola, bienvenido a Basura OnTime 🚛</p>
+      <p>Hola, Señor conductor bienvenido a Basura OnTime 🚛</p>
       <p>Tu contraseña  es: <b>${contrasena}</b></p>
       <p> con tu mismo correo y esta contraseña podras iniciar sesion </p>
     `
